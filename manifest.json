@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "Smart Search Router",
+  "description": "Smart omnibox search with location-aware routing",
+  "version": "1.2",
+  "permissions": ["tabs", "scripting"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "omnibox": {
+    "keyword": "s"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ]
+}

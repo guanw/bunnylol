@@ -1,0 +1,42 @@
+function getLocation(callback) {
+  // Ask active tab’s content script for location
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    if (!tabs[0]) {
+      callback(null);
+      return;
+    }
+    chrome.tabs.sendMessage(tabs[0].id, { type: "getLocation" }, (response) => {
+      callback(response);
+    });
+  });
+}
+
+function openUrl(url) {
+  chrome.tabs.create({ url });
+}
+
+chrome.omnibox.onInputEntered.addListener((text) => {
+  if (text.startsWith("g ")) {
+    let query = text.substring(2);
+    openUrl("https://www.google.com/search?q=" + encodeURIComponent(query));
+  } else if (text.toLowerCase() === "restaurant") {
+    getLocation(loc => {
+      if (loc) {
+        openUrl(`https://www.google.com/maps/search/restaurants/@${loc.lat},${loc.lng},14z`);
+      } else {
+        openUrl("https://www.google.com/maps/search/restaurants+near+me");
+      }
+    });
+  } else if (text.toLowerCase() === "weather") {
+    getLocation(loc => {
+      if (loc) {
+        openUrl(`https://weather.com/weather/today//l/${loc.lat},${loc.lng}`);
+      } else {
+        openUrl("https://weather.com/weather/today/");
+      }
+    });
+  } else {
+    openUrl("https://www.google.com/search?q=" + encodeURIComponent(text));
+  }
+});
+
