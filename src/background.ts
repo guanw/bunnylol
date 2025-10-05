@@ -1,25 +1,31 @@
 import { GOOGLE, WEATHER, CHAT, RESTAURANT } from './keywords.js';
 
-function getLocation(callback) {
-  // Ask active tab’s content script for location
+interface Location {
+  lat: number;
+  lng: number;
+}
+
+function getLocation(callback: (loc: Location | null) => void): void {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     if (!tabs[0]) {
       callback(null);
       return;
     }
-    chrome.tabs.sendMessage(tabs[0].id, { type: 'getLocation' }, (response) => {
-      callback(response);
-    });
+    chrome.tabs.sendMessage(
+      tabs[0].id!,
+      { type: 'getLocation' },
+      (response: Location | null) => callback(response)
+    );
   });
 }
 
-function openUrl(url) {
+function openUrl(url: string): void {
   chrome.tabs.create({ url });
 }
 
 chrome.omnibox.onInputEntered.addListener((text) => {
   if (text.startsWith(GOOGLE + ' ')) {
-    let query = text.substring(2);
+    const query = text.substring(2);
     openUrl('https://www.google.com/search?q=' + encodeURIComponent(query));
   } else if (text.toLowerCase() === RESTAURANT) {
     getLocation((loc) => {
@@ -32,7 +38,7 @@ chrome.omnibox.onInputEntered.addListener((text) => {
   } else if (text.toLowerCase() === WEATHER) {
     getLocation((loc) => {
       if (loc) {
-        openUrl(`https://weather.com/weather/today//l/${loc.lat},${loc.lng}`);
+        openUrl(`https://weather.com/weather/today/l/${loc.lat},${loc.lng}`);
       } else {
         openUrl('https://weather.com/weather/today/');
       }
