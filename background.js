@@ -1,3 +1,5 @@
+import { GOOGLE, WEATHER, CHAT, RESTAURANT } from './keywords.js';
+
 function getLocation(callback) {
   // Ask active tab’s content script for location
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -16,10 +18,10 @@ function openUrl(url) {
 }
 
 chrome.omnibox.onInputEntered.addListener((text) => {
-  if (text.startsWith('g ')) {
+  if (text.startsWith(GOOGLE + ' ')) {
     let query = text.substring(2);
     openUrl('https://www.google.com/search?q=' + encodeURIComponent(query));
-  } else if (text.toLowerCase() === 'restaurant') {
+  } else if (text.toLowerCase() === RESTAURANT) {
     getLocation((loc) => {
       if (loc) {
         openUrl(`https://www.google.com/maps/search/restaurants/@${loc.lat},${loc.lng},14z`);
@@ -27,7 +29,7 @@ chrome.omnibox.onInputEntered.addListener((text) => {
         openUrl('https://www.google.com/maps/search/restaurants+near+me');
       }
     });
-  } else if (text.toLowerCase() === 'weather') {
+  } else if (text.toLowerCase() === WEATHER) {
     getLocation((loc) => {
       if (loc) {
         openUrl(`https://weather.com/weather/today//l/${loc.lat},${loc.lng}`);
@@ -35,7 +37,7 @@ chrome.omnibox.onInputEntered.addListener((text) => {
         openUrl('https://weather.com/weather/today/');
       }
     });
-  } else if (text.startsWith('chat ')) {
+  } else if (text.startsWith(CHAT + ' ')) {
     const query = text.substring(5).trim();
     const chatUrl = 'https://chat.openai.com/?q=' + encodeURIComponent(query);
     openUrl(chatUrl);
