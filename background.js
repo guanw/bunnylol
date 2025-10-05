@@ -5,7 +5,7 @@ function getLocation(callback) {
       callback(null);
       return;
     }
-    chrome.tabs.sendMessage(tabs[0].id, { type: "getLocation" }, (response) => {
+    chrome.tabs.sendMessage(tabs[0].id, { type: 'getLocation' }, (response) => {
       callback(response);
     });
   });
@@ -16,31 +16,30 @@ function openUrl(url) {
 }
 
 chrome.omnibox.onInputEntered.addListener((text) => {
-  if (text.startsWith("g ")) {
+  if (text.startsWith('g ')) {
     let query = text.substring(2);
-    openUrl("https://www.google.com/search?q=" + encodeURIComponent(query));
-  } else if (text.toLowerCase() === "restaurant") {
-    getLocation(loc => {
+    openUrl('https://www.google.com/search?q=' + encodeURIComponent(query));
+  } else if (text.toLowerCase() === 'restaurant') {
+    getLocation((loc) => {
       if (loc) {
         openUrl(`https://www.google.com/maps/search/restaurants/@${loc.lat},${loc.lng},14z`);
       } else {
-        openUrl("https://www.google.com/maps/search/restaurants+near+me");
+        openUrl('https://www.google.com/maps/search/restaurants+near+me');
       }
     });
-  } else if (text.toLowerCase() === "weather") {
-    getLocation(loc => {
+  } else if (text.toLowerCase() === 'weather') {
+    getLocation((loc) => {
       if (loc) {
         openUrl(`https://weather.com/weather/today//l/${loc.lat},${loc.lng}`);
       } else {
-        openUrl("https://weather.com/weather/today/");
+        openUrl('https://weather.com/weather/today/');
       }
     });
-  } else if (text.startsWith("chat ")) {
+  } else if (text.startsWith('chat ')) {
     const query = text.substring(5).trim();
-    const chatUrl = "https://chat.openai.com/?q=" + encodeURIComponent(query);
+    const chatUrl = 'https://chat.openai.com/?q=' + encodeURIComponent(query);
     openUrl(chatUrl);
   } else {
-    openUrl("https://www.google.com/search?q=" + encodeURIComponent(text));
+    openUrl('https://www.google.com/search?q=' + encodeURIComponent(text));
   }
 });
-
