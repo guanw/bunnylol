@@ -35,6 +35,10 @@ chrome.omnibox.onInputEntered.addListener((text) => {
         openUrl("https://weather.com/weather/today/");
       }
     });
+  } else if (text.startsWith("chat ")) {
+    const query = text.substring(5).trim();
+    const chatUrl = "https://chat.openai.com/?q=" + encodeURIComponent(query);
+    openUrl(chatUrl);
   } else {
     openUrl("https://www.google.com/search?q=" + encodeURIComponent(text));
   }
