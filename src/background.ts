@@ -1,4 +1,4 @@
-import { GOOGLE, WEATHER, CHAT, RESTAURANT } from './keywords.js';
+import { GOOGLE, WEATHER, CHAT, RESTAURANT, GMAIL } from './keywords.js';
 
 interface Location {
   lat: number;
@@ -32,6 +32,8 @@ chrome.omnibox.onInputEntered.addListener((text) => {
     handleCheckWeather()
   } else if (text.startsWith(CHAT + ' ')) {
     handleChat(text)
+  } else if (text.toLowerCase() === GMAIL) {
+    handleOpenGmail()
   } else {
     handleDefaultSearch(text)
   }
@@ -70,5 +72,9 @@ function handleChat(text: string) {
 
 function handleDefaultSearch(text: string) {
   openUrl('https://www.google.com/search?q=' + encodeURIComponent(text));
+}
+
+function handleOpenGmail() {
+  openUrl('https://mail.google.com/mail/u/');
 }
 
