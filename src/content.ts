@@ -1,4 +1,4 @@
-chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((msg, _, sendResponse) => {
   if (msg.type === 'getLocation') {
     navigator.geolocation.getCurrentPosition(
       (pos) => {

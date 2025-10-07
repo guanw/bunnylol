@@ -25,29 +25,50 @@ function openUrl(url: string): void {
 
 chrome.omnibox.onInputEntered.addListener((text) => {
   if (text.startsWith(GOOGLE + ' ')) {
-    const query = text.substring(2);
-    openUrl('https://www.google.com/search?q=' + encodeURIComponent(query));
+    handleGoogleSearch(text)
   } else if (text.toLowerCase() === RESTAURANT) {
-    getLocation((loc) => {
-      if (loc) {
-        openUrl(`https://www.google.com/maps/search/restaurants/@${loc.lat},${loc.lng},14z`);
-      } else {
-        openUrl('https://www.google.com/maps/search/restaurants+near+me');
-      }
-    });
+    handleMapSearchRestaurant()
   } else if (text.toLowerCase() === WEATHER) {
-    getLocation((loc) => {
-      if (loc) {
-        openUrl(`https://weather.com/weather/today/l/${loc.lat},${loc.lng}`);
-      } else {
-        openUrl('https://weather.com/weather/today/');
-      }
-    });
+    handleCheckWeather()
   } else if (text.startsWith(CHAT + ' ')) {
-    const query = text.substring(5).trim();
-    const chatUrl = 'https://chat.openai.com/?q=' + encodeURIComponent(query);
-    openUrl(chatUrl);
+    handleChat(text)
   } else {
-    openUrl('https://www.google.com/search?q=' + encodeURIComponent(text));
+    handleDefaultSearch(text)
   }
 });
+
+function handleGoogleSearch(text: string) {
+  const query = text.substring(2);
+  openUrl('https://www.google.com/search?q=' + encodeURIComponent(query));
+}
+
+function handleMapSearchRestaurant() {
+  getLocation((loc) => {
+    if (loc) {
+      openUrl(`https://www.google.com/maps/search/restaurants/@${loc.lat},${loc.lng},14z`);
+    } else {
+      openUrl('https://www.google.com/maps/search/restaurants+near+me');
+    }
+  });
+}
+
+function handleCheckWeather() {
+  getLocation((loc) => {
+    if (loc) {
+      openUrl(`https://weather.com/weather/today/l/${loc.lat},${loc.lng}`);
+    } else {
+      openUrl('https://weather.com/weather/today/');
+    }
+  });
+}
+
+function handleChat(text: string) {
+  const query = text.substring(5).trim();
+  const chatUrl = 'https://chat.openai.com/?q=' + encodeURIComponent(query);
+  openUrl(chatUrl);
+}
+
+function handleDefaultSearch(text: string) {
+  openUrl('https://www.google.com/search?q=' + encodeURIComponent(text));
+}
+
